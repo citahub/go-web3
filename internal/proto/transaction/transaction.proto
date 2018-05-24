@@ -1,0 +1,24 @@
+syntax = "proto3";
+package tx;
+
+enum Crypto {
+    SECP = 0;
+    SM2 = 1;
+}
+
+message Transaction {
+    string to = 1;
+    string nonce = 2;
+    uint64 quota = 3; // gas
+    uint64 valid_until_block = 4;
+    bytes data = 5;
+    uint64 value = 6;
+    uint32 chain_id = 7;
+    uint32 version = 8;
+}
+
+message UnverifiedTransaction {
+    Transaction transaction = 1;
+    bytes signature = 2;
+    Crypto crypto = 3;
+}
