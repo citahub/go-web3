@@ -35,7 +35,7 @@ func TestGetBlockByNumber(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	number2, err := utils.ParseUint64(b.Header.Number)
+	number2, err := utils.ParseHexToUint64(b.Header.Number)
 	if err != nil {
 		t.Fatal(err)
 	}
