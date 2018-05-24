@@ -57,7 +57,7 @@ func (c *cita) GetBlockNumber() (uint64, error) {
 		return 0, err
 	}
 
-	return utils.ParseUint64(s)
+	return utils.ParseHexToUint64(s)
 }
 
 func (c *cita) GetBlockByHash(hash string, detail bool) (*Block, error) {
@@ -74,7 +74,7 @@ func (c *cita) GetBlockByHash(hash string, detail bool) (*Block, error) {
 }
 
 func (c *cita) GetBlockByNumber(number uint64, detail bool) (*Block, error) {
-	resp, err := c.provider.SendRequest(getBlockByNumberMethod, utils.ConvUint64To16(number), detail)
+	resp, err := c.provider.SendRequest(getBlockByNumberMethod, utils.ConvUint64ToHex(number), detail)
 	if err != nil {
 		return nil, err
 	}
@@ -87,7 +87,7 @@ func (c *cita) GetBlockByNumber(number uint64, detail bool) (*Block, error) {
 }
 
 func (c *cita) GetBlockMetadata(number uint64) (*BlockMetadata, error) {
-	resp, err := c.provider.SendRequest(getBlockMetadataMethod, utils.ConvUint64To16(number))
+	resp, err := c.provider.SendRequest(getBlockMetadataMethod, utils.ConvUint64ToHex(number))
 	if err != nil {
 		return nil, err
 	}
