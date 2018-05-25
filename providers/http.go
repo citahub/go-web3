@@ -1,6 +1,8 @@
 package providers
 
 import (
+	"fmt"
+
 	"github.com/cryptape/go-web3/errors"
 	"github.com/ybbus/jsonrpc"
 )
@@ -32,6 +34,10 @@ func (hp *httpProvider) SendRequest(method string, params ...interface{}) (*json
 
 	if resp.Error != nil {
 		return nil, errors.New(resp.Error.Code, resp.Error.Message)
+	}
+
+	if resp.Result == nil {
+		return nil, errors.New(0, fmt.Sprintf("the result of method %s is null", method))
 	}
 
 	return resp, nil

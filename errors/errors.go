@@ -42,6 +42,14 @@ func IsInvalidParams(err error) bool {
 	return e.Code == invalidParamsCode
 }
 
+func IsNull(err error) bool {
+	e, ok := err.(*Error)
+	if !ok {
+		return false
+	}
+	return e.Code == 0
+}
+
 func (e *Error) Error() string {
 	return e.Message
 }
