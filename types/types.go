@@ -1,4 +1,4 @@
-package cita
+package types
 
 type Block struct {
 	Version int          `json:"version"`
