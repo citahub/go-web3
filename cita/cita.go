@@ -33,7 +33,7 @@ type Interface interface {
 	GetTransactionReceipt(hash string) (*Receipt, error)
 
 	SendRawTransaction(data string) (*TransactionStatus, error)
-	CreateContract(code []byte, hexPrivateKey, nonce string, quota, validUntilBlock uint64) (*TransactionStatus, error)
+	CreateContract(code, hexPrivateKey, nonce string, quota, validUntilBlock uint64) (*TransactionStatus, error)
 }
 
 func New(provider providers.Interface) Interface {
@@ -109,7 +109,7 @@ func (c *cita) GetTransactionProof(hash string) (string, error) {
 	return resp.GetString()
 }
 
-func (c *cita) CreateContract(code []byte, hexPrivateKey, nonce string, quota, validUntilBlock uint64) (*TransactionStatus, error) {
+func (c *cita) CreateContract(code, hexPrivateKey, nonce string, quota, validUntilBlock uint64) (*TransactionStatus, error) {
 	num, err := c.GetBlockNumber()
 	if err != nil {
 		return nil, err
@@ -120,9 +120,13 @@ func (c *cita) CreateContract(code []byte, hexPrivateKey, nonce string, quota, v
 		return nil, err
 	}
 
+	codeB, err := hex.DecodeString(utils.CleanHexPrefix(code))
+	if err != nil {
+		return nil, err
+	}
 	tx := &transaction.Transaction{
 		To:              "",
-		Data:            code,
+		Data:            codeB,
 		ValidUntilBlock: num + validUntilBlock,
 		ChainId:         meta.ChainID,
 		Nonce:           nonce,

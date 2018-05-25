@@ -1,6 +1,9 @@
 package utils
 
-import "strconv"
+import (
+	"strconv"
+	"strings"
+)
 
 func ParseHexToUint64(s string) (uint64, error) {
 	num, err := strconv.ParseInt(s, 0, 0)
@@ -13,4 +16,12 @@ func ParseHexToUint64(s string) (uint64, error) {
 
 func ConvUint64ToHex(num uint64) string {
 	return strconv.FormatUint(num, 16)
+}
+
+func CleanHexPrefix(s string) string {
+	if strings.HasPrefix(s, "0x") {
+		return strings.TrimPrefix(s, "0x")
+	}
+
+	return s
 }
