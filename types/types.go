@@ -1,5 +1,11 @@
 package types
 
+import (
+	"math/big"
+)
+
+const AddressLength = 20
+
 type Block struct {
 	Version int          `json:"version"`
 	Hash    string       `json:"hash"`
@@ -60,6 +66,7 @@ type Receipt struct {
 	Logs              []*Log `json:"logs"`
 	Root              string `json:"root"`
 	LogsBloom         string `json:"logsBloom"`
+	ErrorMessage      string `json:"errorMessage"`
 }
 
 type Log struct {
@@ -72,4 +79,19 @@ type Log struct {
 	TransactionIndex    string   `json:"transactionIndex"`
 	LogIndex            string   `json:"logIndex"`
 	TransactionLogIndex string   `json:"transactionLogIndex"`
+}
+
+// TransactParams is the collection of authorization data required to create a
+// valid CITA transaction.
+type TransactParams struct {
+	HexPrivateKey   string
+	To              string
+	Nonce           string
+	ValidUntilBlock *big.Int
+
+	Value *big.Int
+	Quota *big.Int
+
+	ChainID uint32
+	Version uint32
 }

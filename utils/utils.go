@@ -3,6 +3,9 @@ package utils
 import (
 	"strconv"
 	"strings"
+
+	"github.com/ethereum/go-ethereum/common"
+	"github.com/ethereum/go-ethereum/crypto"
 )
 
 func ParseHexToUint64(s string) (uint64, error) {
@@ -32,4 +35,12 @@ func AddHexPrefix(s string) string {
 	}
 
 	return s
+}
+
+func PrivateKeyToAddress(hexPrivateKey string) (common.Address, error) {
+	privateK, err := crypto.HexToECDSA(CleanHexPrefix(hexPrivateKey))
+	if err != nil {
+		return common.Address{}, err
+	}
+	return crypto.PubkeyToAddress(privateK.PublicKey), nil
 }

@@ -20,10 +20,14 @@ package backend
 import (
 	"context"
 	"errors"
+	"math/big"
 
 	"github.com/cryptape/go-web3/providers"
+	"github.com/cryptape/go-web3/types"
 
 	ethereum "github.com/ethereum/go-ethereum"
+	"github.com/ethereum/go-ethereum/accounts/abi"
+	"github.com/ethereum/go-ethereum/common"
 )
 
 var (
@@ -41,6 +45,39 @@ var (
 	ErrNoCodeAfterDeploy = errors.New("no contract code after deployment")
 )
 
+// BoundContract is the base wrapper object that reflects a contract on the
+// Ethereum network. It contains a collection of methods that are used by the
+// higher level contract bindings to operate.
+type BoundContract struct {
+	Address common.Address // Deployment address of the contract on the Ethereum blockchain
+	Abi     abi.ABI        // Reflect based ABI to access the correct Ethereum methods
+	// caller     ContractCaller     // Read interface to interact with the blockchain
+	// transactor ContractTransactor // Write interface to interact with the blockchain
+	// filterer   ContractFilterer   // Event filtering to interact with the blockchain
+}
+
+// ContractCaller defines the methods needed to allow operating with contract on a read
+// only basis.
+type ContractCaller interface {
+	CodeAt(ctx context.Context, contract common.Address, blockNumber *big.Int) (string, error)
+	AbiAt(ctx context.Context, contract common.Address, blockNumber *big.Int) (abi.ABI, error)
+	// ContractCall executes an Ethereum contract call with the specified data as the
+	// input.
+	CallContract(ctx context.Context, result interface{}, call CallMsg, blockNumber *big.Int) error
+}
+
+// ContractTransactor defines the methods needed to allow operating with contract
+// on a write only basis. Beside the transacting method, the remainder are helpers
+// used when the user does not provide some needed values, but rather leaves it up
+// to the transactor to decide.
+type ContractTransactor interface {
+	// SendTransaction injects the transaction into the pending pool for execution.
+	SendTransaction(ctx context.Context, tx *types.Transaction, hexPrivateKey string) (common.Hash, error)
+	// DeployContract deploys a contract onto the Ethereum blockchain and binds the
+	// deployment address with a Go wrapper.
+	DeployContract(ctx context.Context, params *types.TransactParams, abi, code string) (common.Hash, *BoundContract, error)
+}
+
 // ContractFilterer defines the methods needed to access log events using one-off
 // queries or continuous event subscriptions.
 type ContractFilterer interface {
@@ -50,13 +87,27 @@ type ContractFilterer interface {
 	SubscribeBlockFilter(ctx context.Context, consumer BlockConsumer) (Subscription, error)
 }
 
-// ContractBackend defines the methods needed to work with contracts on a read-write basis.
-type ContractBackend interface {
-	ContractFilterer
+// See https://cryptape.github.io/cita/zh/usage-guide/rpc/index.html
+type Cita interface {
+	GetBlockNumber() (*big.Int, error)
+	GetBlockMetadata(blockNumber *big.Int) (*types.BlockMetadata, error)
+	TransactionReceipt(ctx context.Context, txHash common.Hash) (*types.Receipt, error)
 }
 
-func New(provider providers.Interface) ContractBackend {
+// Interface defines the methods needed to work with contracts on a read-write basis.
+type Interface interface {
+	ContractCaller
+	ContractTransactor
+	ContractFilterer
+	Cita
+}
+
+func New(provider providers.Interface) Interface {
 	return &backend{
 		provider: provider,
 	}
+}
+
+type backend struct {
+	provider providers.Interface
 }
