@@ -38,8 +38,8 @@
     "rlp",
     "trie"
   ]
-  revision = "2688dab48c9b8ae71b8d95c7678817eaa17f2b53"
-  version = "v1.8.8"
+  revision = "ff9b14617e73c07dfa028bc477fe86c1e04d80c5"
+  version = "v1.8.9"
 
 [[projects]]
   name = "github.com/go-stack/stack"
@@ -136,6 +136,6 @@
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "209ab1c4257c7afca6b1b4c029a5888b40f64734dacff24367d2a3e9e54b99cc"
+  inputs-digest = "4d0a8aec37dbd003c49353f9a3854c48740e747337c6122f8619e5a4c0c9b672"
   solver-name = "gps-cdcl"
   solver-version = 1
