@@ -23,7 +23,8 @@ func main() {
 
 ## Check List
 - [ ] JSON RPC
-  - [ ] eth filters
+  - [x] block filters
+  - [x] log filters
   - [ ] call contract
   - [ ] other
 - [ ] Code generation base on [abigen](https://github.com/ethereum/go-ethereum/wiki/Native-DApps:-Go-bindings-to-Ethereum-contracts)
