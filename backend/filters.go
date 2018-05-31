@@ -4,6 +4,7 @@ import (
 	"context"
 	"math/big"
 	"sync"
+	"time"
 
 	"github.com/cryptape/go-web3/types"
 
@@ -50,6 +51,7 @@ func (b *backend) SubscribeLogFilter(ctx context.Context, query ethereum.FilterQ
 			_, err := b.uninstallFilter(id)
 			return err
 		},
+		1*time.Second,
 	)
 	return s, nil
 }
@@ -79,6 +81,7 @@ func (b *backend) SubscribeBlockFilter(ctx context.Context, consumer BlockConsum
 			_, err := b.uninstallFilter(id)
 			return err
 		},
+		1*time.Second,
 	)
 
 	return s, nil
@@ -164,7 +167,7 @@ type Subscription interface {
 	Unsubscription()
 }
 
-func newSub(executor func() (bool, error), clear func() error) Subscription {
+func newSub(executor func() (bool, error), clear func() error, wait time.Duration) Subscription {
 	s := &subscription{
 		executor: executor,
 		clear:    clear,
@@ -190,6 +193,7 @@ func newSub(executor func() (bool, error), clear func() error) Subscription {
 					return
 				}
 			}
+			time.Sleep(wait)
 		}
 	}(s)
 
