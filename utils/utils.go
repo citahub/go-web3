@@ -15,12 +15,20 @@ func ParseHexToUint64(s string) (uint64, error) {
 }
 
 func ConvUint64ToHex(num uint64) string {
-	return strconv.FormatUint(num, 16)
+	return AddHexPrefix(strconv.FormatUint(num, 16))
 }
 
 func CleanHexPrefix(s string) string {
 	if strings.HasPrefix(s, "0x") {
 		return strings.TrimPrefix(s, "0x")
+	}
+
+	return s
+}
+
+func AddHexPrefix(s string) string {
+	if !strings.HasPrefix(s, "0x") {
+		return "0x" + s
 	}
 
 	return s
